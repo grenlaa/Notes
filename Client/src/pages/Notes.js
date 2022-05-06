@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState, Component } from "react";
 import CardNotes from "../components/card/CardNotes";
+import CardNotes1 from "../components/card/CardNotes1"
 import CkeditorCard from "../components/card/CkeditorCard";
 import createImage, { createNotes, deletNote, editNotes } from '../Requests/R_Notes';
 
@@ -12,6 +13,10 @@ const Notes = () => {
     const [descr, setDescr] = useState('')
     const [image, setImage] = useState(null)
     const [notes, setNotes] = useState([])
+
+
+    const [stand, setStand] = useState(false)
+    const [notesC, setNotesC] = useState([{ id: 1000, title: "Стандартный заголовок", descr: "<p>Тут будет описание заметок</p>" }])
     const [title, setTitle] = useState('')
     const [id, setId] = useState('')
 
@@ -34,14 +39,15 @@ const Notes = () => {
 
 
     //кнопки открыт/удаления заметки. передается в CardNotes title,descr
-    async function Open(id,title, descr) {
+    async function Open(id, title, descr, openS) {
         setId(id)
         setTitle(title)
         setDescr(descr)
-        console.log(id,title,descr)
+        console.log(id, title, descr)
         setAdd(true)
         SetEdit(true)
         setEditN(true)
+        setStand(openS)
     }
     async function Delet(id) {
         await deletNote(id)
@@ -65,7 +71,12 @@ const Notes = () => {
     async function editNotesFun() {
         await editNotes(id, title, descr)
         setAdd(false)
-        
+        setReboot(!reboot)
+    }
+    async function editNotesFunC() {
+        setNotesC([{ id: id, title: title, descr: descr }])
+
+        setAdd(false)
         setReboot(!reboot)
     }
 
@@ -88,7 +99,7 @@ const Notes = () => {
                 <div class="col-3 scroll">
 
                     <button type="button" class="btn btn-outline-success btn-sm" onClick={Create}>Добавить +</button>
-
+                    {notesC.map(notesC => <CardNotes1 notesC={notesC} open={Open}></CardNotes1>)}
                     {notes.map(notes =>
                         // open={Open} delet={Delet}
                         <CardNotes notes={notes} open={Open} delet={Delet}></CardNotes>)
@@ -107,8 +118,15 @@ const Notes = () => {
                                 <button type="button" class="btn btn-outline-secondary btn-sm" onClick={Edit}>Просмотр</button>
                                 <button type="button" class="btn btn-outline-success btn-sm" onClick={AddNote}>Добавить</button>
                                 {editN ?
-                                    <button type="button" class="btn btn-outline-success btn-sm" onClick={editNotesFun}>Внести изм.</button>
-                                    : <div></div>
+                                    <div>
+                                        {stand ?
+                                            <button type="button" class="btn btn-outline-success btn-sm" onClick={editNotesFunC} >Внести изм.</button>
+                                            :
+                                            <button type="button" class="btn btn-outline-success btn-sm" onClick={editNotesFun}>Внести изм.</button>
+                                        }
+                                    </div>
+                                    :
+                                    <div></div>
                                 }
                                 <input type="text" name="title" placeholder="Название" class="form-control title"
                                     value={title}
