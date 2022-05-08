@@ -3,7 +3,7 @@ import axios from "axios"
 export default async function createImage(image){
     
     let file = new FormData();
-    file.append("image", image);
+    file.append("file", image);
     const response =await axios.post(
         "http://localhost:8081/api/CreateImage", file,
         {

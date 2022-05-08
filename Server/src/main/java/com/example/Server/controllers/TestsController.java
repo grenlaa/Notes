@@ -1,5 +1,6 @@
 package com.example.Server.controllers;
 
+import com.example.Server.models.Notes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +20,16 @@ public class TestsController {
     @Value("${upload.path}")
     private String uploadPath;
 
+    @GetMapping("/getIm")
+    public String getIm() {
+        return str;
+    }
+
     @PostMapping("/CreateImage")
     public String CreateImage(
-            @RequestParam("image") MultipartFile image
+            @RequestParam("file") MultipartFile image
     ) throws IOException {
+
         String resultFileName = null;
         if (image != null && !image.getOriginalFilename().isEmpty()) {
             File uploadDir = new File(uploadPath);
@@ -34,8 +41,6 @@ public class TestsController {
             image.transferTo((new File("C:\\study\\Notes\\Client\\public\\assets\\images\\" + resultFileName)));
 
         }
-        str=("assets/images/"+resultFileName);
         return ("assets/images/"+resultFileName);
     }
-
 }
